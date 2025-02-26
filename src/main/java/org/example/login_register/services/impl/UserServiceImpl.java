@@ -1,5 +1,6 @@
 package org.example.login_register.services.impl;
 
+import org.example.login_register.dtos.LoginDto;
 import org.example.login_register.dtos.RegisterDto;
 import org.example.login_register.models.User;
 import org.example.login_register.repositories.UserRepository;
@@ -8,6 +9,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 
 @Service
@@ -39,5 +42,19 @@ public class UserServiceImpl implements UserService {
         newUser.setPassword(bCryptPasswordEncoder.encode(registerDto.getPassword()));
         userRepository.save(newUser);
         return true;
+    }
+
+    @Override
+    public boolean login(LoginDto loginDto) {
+        User user = userRepository.findByEmail(loginDto.getEmail());
+        if (user == null) {
+            return false;
+        }
+
+        if (bCryptPasswordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
+            userRepository.save(user);
+            return true;
+        }
+        return false;
     }
 }

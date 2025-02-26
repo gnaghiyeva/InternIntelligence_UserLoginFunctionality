@@ -1,5 +1,6 @@
 package org.example.login_register.controller;
 
+import org.example.login_register.dtos.LoginDto;
 import org.example.login_register.dtos.RegisterDto;
 import org.example.login_register.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,5 +28,14 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during registration: " + e.getMessage());
         }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
+        boolean isAuthenticated = userService.login(loginDto);
+        if (!isAuthenticated) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed. Email or password is incorrect.");
+        }
+        return ResponseEntity.ok("Login completed successfully.");
     }
 }
