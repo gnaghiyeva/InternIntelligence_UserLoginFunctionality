@@ -20,7 +20,7 @@ public class Security {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/auth/register", "/api/auth/login").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/auth/register", "/api/auth/login", "/api/auth/verify").permitAll()
                         .anyRequest().authenticated()
                 );
 

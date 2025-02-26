@@ -6,10 +6,7 @@ import org.example.login_register.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -37,5 +34,10 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed. Email or password is incorrect.");
         }
         return ResponseEntity.ok("Login completed successfully.");
+    }
+
+    @GetMapping("/verify")
+    public String verifyEmail(@RequestParam String token) {
+        return userService.verifyEmail(token);
     }
 }
