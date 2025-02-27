@@ -6,6 +6,7 @@ import org.example.login_register.dtos.*;
 import org.example.login_register.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,9 +17,8 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
-
-    @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> register(@ModelAttribute RegisterDto registerDto) {
         try {
             boolean isRegistered = userService.register(registerDto);
             if (!isRegistered) {
@@ -30,8 +30,8 @@ public class UserController {
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
+    @PostMapping(value = "/login", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> login(@ModelAttribute LoginDto loginDto) {
         boolean isAuthenticated = userService.login(loginDto);
         if (!isAuthenticated) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed. Email or password is incorrect.");
@@ -49,9 +49,8 @@ public class UserController {
         request.getSession().invalidate();
         return ResponseEntity.ok("Exit done");
     }
-
-    @PostMapping("/forget-password")
-    public ResponseEntity<String> forgetPassword(@RequestBody ForgetPasswordDto forgetPasswordDto) {
+    @PostMapping(value = "/forget-password",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> forgetPassword(@ModelAttribute ForgetPasswordDto forgetPasswordDto) {
         boolean result = userService.forgetPassword(forgetPasswordDto);
         if (result) {
             return ResponseEntity.ok("Password reset email sent.");
@@ -59,8 +58,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found.");
     }
 
-    @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
+    @PostMapping(value = "/reset-password",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> resetPassword(@ModelAttribute ResetPasswordDto resetPasswordDto) {
         boolean isReset = userService.resetPassword(resetPasswordDto);
 
         if (isReset) {
