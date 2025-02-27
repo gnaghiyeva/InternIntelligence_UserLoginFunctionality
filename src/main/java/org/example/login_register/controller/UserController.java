@@ -2,15 +2,14 @@ package org.example.login_register.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.example.login_register.dtos.ForgetPasswordDto;
-import org.example.login_register.dtos.LoginDto;
-import org.example.login_register.dtos.RegisterDto;
-import org.example.login_register.dtos.ResetPasswordDto;
+import org.example.login_register.dtos.*;
 import org.example.login_register.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -69,5 +68,11 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The email or confirmation code is incorrect.");
         }
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        List<UserDto> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
 }

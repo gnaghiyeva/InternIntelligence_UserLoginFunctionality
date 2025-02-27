@@ -1,10 +1,9 @@
 package org.example.login_register.services;
 
-import org.example.login_register.dtos.ForgetPasswordDto;
-import org.example.login_register.dtos.LoginDto;
-import org.example.login_register.dtos.RegisterDto;
-import org.example.login_register.dtos.ResetPasswordDto;
+import org.example.login_register.dtos.*;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 public interface UserService {
     boolean register(RegisterDto registerDto);
@@ -16,6 +15,8 @@ public interface UserService {
     boolean forgetPassword(ForgetPasswordDto forgetPasswordDto);
 
     boolean resetPassword(ResetPasswordDto resetPasswordDto);
+
+    List<UserDto> getAllUsers();
 
 
 }

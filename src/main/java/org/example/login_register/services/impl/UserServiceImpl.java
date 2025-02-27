@@ -2,10 +2,7 @@ package org.example.login_register.services.impl;
 
 import org.example.login_register.config.JwtUtil;
 import org.example.login_register.config.EmailService;
-import org.example.login_register.dtos.ForgetPasswordDto;
-import org.example.login_register.dtos.LoginDto;
-import org.example.login_register.dtos.RegisterDto;
-import org.example.login_register.dtos.ResetPasswordDto;
+import org.example.login_register.dtos.*;
 import org.example.login_register.models.User;
 import org.example.login_register.repositories.UserRepository;
 import org.example.login_register.services.UserService;
@@ -16,8 +13,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -149,5 +148,12 @@ public class UserServiceImpl implements UserService {
         message.setSubject("Şifrə sıfırlama kodu");
         message.setText("Şifrənizi sıfırlamaq üçün təsdiq kodunuz: " + verificationCode);
         mailSender.send(message);
+    }
+
+    @Override
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(user -> modelMapper.map(user, UserDto.class))
+                .collect(Collectors.toList());
     }
 }
