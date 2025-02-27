@@ -1,5 +1,7 @@
 package org.example.login_register.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.example.login_register.dtos.LoginDto;
 import org.example.login_register.dtos.RegisterDto;
 import org.example.login_register.services.UserService;
@@ -39,5 +41,11 @@ public class UserController {
     @GetMapping("/verify")
     public String verifyEmail(@RequestParam String token) {
         return userService.verifyEmail(token);
+    }
+    
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+        request.getSession().invalidate();
+        return ResponseEntity.ok("Exit done");
     }
 }

@@ -1,16 +1,19 @@
 package org.example.login_register.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springdoc.core.models.GroupedOpenApi;
+
+@Configuration
 public class SwaggerConfig {
 
     @Bean
-    GroupedOpenApi openApi() {
+    public GroupedOpenApi publicApi() {
         return GroupedOpenApi.builder()
                 .group("public-apis")
                 .pathsToMatch("/**")
@@ -18,9 +21,12 @@ public class SwaggerConfig {
     }
 
     @Bean
-    OpenAPI customOpenApi() {
+    public OpenAPI customOpenApi() {
         return new OpenAPI()
-                .info(new Info().title("Demo").version("v 1.0.1"))
+                .info(new Info()
+                        .title("Demo API")
+                        .version("1.0.1")
+                        .description("Auth API documentation."))
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(
                         new Components().addSecuritySchemes("bearerAuth",
