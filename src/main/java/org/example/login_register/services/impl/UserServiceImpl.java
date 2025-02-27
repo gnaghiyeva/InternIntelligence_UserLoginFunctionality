@@ -2,15 +2,22 @@ package org.example.login_register.services.impl;
 
 import org.example.login_register.config.JwtUtil;
 import org.example.login_register.config.EmailService;
+import org.example.login_register.dtos.ForgetPasswordDto;
 import org.example.login_register.dtos.LoginDto;
 import org.example.login_register.dtos.RegisterDto;
+import org.example.login_register.dtos.ResetPasswordDto;
 import org.example.login_register.models.User;
 import org.example.login_register.repositories.UserRepository;
 import org.example.login_register.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+import java.util.Random;
 
 
 @Service
@@ -27,6 +34,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private JavaMailSender mailSender;
 
     private boolean isValidPassword(String password) {
         String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
@@ -93,5 +102,52 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Please verify your email first.");
         }
         return true;
+    }
+
+    @Override
+    public boolean forgetPassword(ForgetPasswordDto forgetPasswordDto) {
+        Optional<User> userOptional = Optional.ofNullable(userRepository.findByEmail(forgetPasswordDto.getEmail()));
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            String verificationCode = generateVerificationCode();
+            sendVerificationEmail(user.getEmail(), verificationCode);
+            user.setVerificationCode(verificationCode);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean resetPassword(ResetPasswordDto resetPasswordDto) {
+        Optional<User> userOptional = Optional.ofNullable(userRepository.findByEmail(resetPasswordDto.getEmail()));
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
+            if (user.getVerificationCode() != null && user.getVerificationCode().equals(resetPasswordDto.getVerificationCode())) {
+                user.setPassword(bCryptPasswordEncoder.encode(resetPasswordDto.getNewPassword()));
+                user.setVerificationCode(null);
+
+                userRepository.save(user);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String generateVerificationCode() {
+        Random random = new Random();
+        int code = 100000 + random.nextInt(900000);
+        return String.valueOf(code);
+    }
+
+    private void sendVerificationEmail(String toEmail, String verificationCode) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmail);
+        message.setSubject("Şifrə sıfırlama kodu");
+        message.setText("Şifrənizi sıfırlamaq üçün təsdiq kodunuz: " + verificationCode);
+        mailSender.send(message);
     }
 }

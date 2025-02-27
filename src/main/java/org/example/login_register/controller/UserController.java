@@ -2,8 +2,10 @@ package org.example.login_register.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.example.login_register.dtos.ForgetPasswordDto;
 import org.example.login_register.dtos.LoginDto;
 import org.example.login_register.dtos.RegisterDto;
+import org.example.login_register.dtos.ResetPasswordDto;
 import org.example.login_register.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,10 +44,30 @@ public class UserController {
     public String verifyEmail(@RequestParam String token) {
         return userService.verifyEmail(token);
     }
-    
+
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
         request.getSession().invalidate();
         return ResponseEntity.ok("Exit done");
+    }
+
+    @PostMapping("/forget-password")
+    public ResponseEntity<String> forgetPassword(@RequestBody ForgetPasswordDto forgetPasswordDto) {
+        boolean result = userService.forgetPassword(forgetPasswordDto);
+        if (result) {
+            return ResponseEntity.ok("Password reset email sent.");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found.");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
+        boolean isReset = userService.resetPassword(resetPasswordDto);
+
+        if (isReset) {
+            return ResponseEntity.ok("Password successfully reset.");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The email or confirmation code is incorrect.");
+        }
     }
 }
