@@ -14,8 +14,8 @@ public class EmailService {
     public void sendVerificationEmail(String toEmail, String verificationLink) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(toEmail);
-        message.setSubject("Email Doğrulama");
-        message.setText("Hesabınızı doğrulamak için aşağıdaki linke tıklayın:\n" + verificationLink);
+        message.setSubject("Email Verification");
+        message.setText("Click the link below to verify your account:\n" + verificationLink);
 
         mailSender.send(message);
     }

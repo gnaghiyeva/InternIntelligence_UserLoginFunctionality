@@ -145,8 +145,8 @@ public class UserServiceImpl implements UserService {
     private void sendVerificationEmail(String toEmail, String verificationCode) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(toEmail);
-        message.setSubject("Şifrə sıfırlama kodu");
-        message.setText("Şifrənizi sıfırlamaq üçün təsdiq kodunuz: " + verificationCode);
+        message.setSubject("Password reset code");
+        message.setText("Your confirmation code to reset your password: " + verificationCode);
         mailSender.send(message);
     }
 
